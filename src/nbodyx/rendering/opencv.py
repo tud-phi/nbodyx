@@ -1,0 +1,1 @@
+def render_opencv(self, frame, scale=1.0):
