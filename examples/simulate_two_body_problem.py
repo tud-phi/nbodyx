@@ -8,7 +8,7 @@ import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from nbodyx.constants import G, M_sun, M_earth, AU
 from nbodyx.ode import make_n_body_ode
-from nbodyx.rendering.opencv import render_n_body_in_opencv
+from nbodyx.rendering.opencv import animate_n_body, render_n_body
 
 if __name__ == "__main__":
     ode_fn = make_n_body_ode(jnp.array([M_sun, M_earth]))
@@ -18,26 +18,24 @@ if __name__ == "__main__":
     theta_earth = jnp.arctan2(x_earth[1], x_earth[0])
     v0_earth = jnp.sqrt(G * M_sun / AU)
     v0_earth = jnp.array([-v0_earth * jnp.sin(theta_earth), v0_earth * jnp.cos(theta_earth)])
-
     # initial conditions for sun
     x_sun = jnp.array([0.0, 0.0])
     v_sun = jnp.array([0.0, 0.0])
-
     # initial state
     y0 = jnp.concatenate([x_sun, x_earth, v_sun, v0_earth])
     print("y0", y0)
+
+    # state bounds
+    x_min, x_max = -2 * AU * jnp.ones((1,)), 2 * AU * jnp.ones((1,))
 
     # evaluate the ODE at the initial state
     y_d0 = jit(ode_fn)(0.0, y0)
     print("y_d0", y_d0)
 
     # render the image at the initial state
-    img = render_n_body_in_opencv(
-        jnp.array([x_sun, x_earth]), 500, 500, -2 * AU * jnp.ones((1,)), 2 * AU * jnp.ones((1,))
-    )
+    img = render_n_body(jnp.array([x_sun, x_earth]), 500, 500, x_min, x_max)
     plt.figure(num="Sample rendering")
     plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    # plt.title(f"y0 = {y0}")
     plt.show()
 
     # simulation settings
@@ -63,3 +61,16 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.box(True)
     plt.show()
+
+    # animate the solution
+    animate_n_body(
+        ts,
+        x_bds_ts,
+        500,
+        500,
+        video_path="examples/outputs/two_body.mp4",
+        speed_up=ts[-1] / 10,
+        x_min=x_min,
+        x_max=x_max,
+        timestamp_unit="M",
+    )

@@ -12,17 +12,16 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
-requires-python = ">=3.8.1"
+requires-python = ">=3.10.0"
 dynamic = ["version"]
-dependencies = ["diffrax", "jax", "numpy", "opencv-python"]
+dependencies = ["diffrax", "jax", "numpy", "opencv-python", "tqdm"]
 
 [project.optional-dependencies]
-examples = ["matplotlib", "seaborn"]
+examples = ["matplotlib"]
 spark = ["pyspark>=3.0.0"]
 test = [
     "bandit[toml]==1.7.5",
