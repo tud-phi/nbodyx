@@ -43,10 +43,10 @@ if __name__ == "__main__":
 
     # plot the solution
     fig, ax = plt.subplots()
-    ax.plot(x_bds_ts[:, 0, 0], x_bds_ts[:, 0, 1], label="Sun")
-    ax.plot(x_bds_ts[:, 1, 0], x_bds_ts[:, 1, 1], label="Earth")
-    ax.set_xlabel("x [m]")
-    ax.set_ylabel("y [m]")
+    ax.plot(x_bds_ts[:, 0, 0] / AU, x_bds_ts[:, 0, 1] / AU, label="Sun")
+    ax.plot(x_bds_ts[:, 1, 0] / AU, x_bds_ts[:, 1, 1] / AU, label="Earth")
+    ax.set_xlabel("x [AU]")
+    ax.set_ylabel("y [AU]")
     ax.legend()
     ax.set_aspect("equal")
     plt.grid(True)
