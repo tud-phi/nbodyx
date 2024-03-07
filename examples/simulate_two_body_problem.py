@@ -1,3 +1,4 @@
+import cv2
 import jax
 
 jax.config.update("jax_enable_x64", True)
@@ -7,6 +8,7 @@ import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from nbodyx.constants import G, M_sun, M_earth, AU
 from nbodyx.ode import make_n_body_ode
+from nbodyx.rendering.opencv import render_n_body_in_opencv
 
 if __name__ == "__main__":
     ode_fn = make_n_body_ode(jnp.array([M_sun, M_earth]))
@@ -27,7 +29,16 @@ if __name__ == "__main__":
 
     # evaluate the ODE at the initial state
     y_d0 = jit(ode_fn)(0.0, y0)
-    print("y_d", y_d0)
+    print("y_d0", y_d0)
+
+    # render the image at the initial state
+    img = render_n_body_in_opencv(
+        jnp.array([x_sun, x_earth]), 500, 500, -2 * AU * jnp.ones((1,)), 2 * AU * jnp.ones((1,))
+    )
+    plt.figure(num="Sample rendering")
+    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    # plt.title(f"y0 = {y0}")
+    plt.show()
 
     # simulation settings
     year_sec = 365 * 24 * 3600
