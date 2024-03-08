@@ -5,7 +5,7 @@ def add(a, b):
     return a + b
 
 
-def test_add(unit_test_mocks: None):
+def test_add():
     assert add(2, 3) == 5
 
 
