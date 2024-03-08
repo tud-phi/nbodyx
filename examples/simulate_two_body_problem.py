@@ -29,7 +29,7 @@ if __name__ == "__main__":
     print("y0", y0)
 
     # state bounds
-    x_min, x_max = -2 * AU * jnp.ones((1,)), 2 * AU * jnp.ones((1,))
+    x_min, x_max = -2 * AU * jnp.ones((2,)), 2 * AU * jnp.ones((2,))
     # external torques
     tau = jnp.zeros((4,))
 

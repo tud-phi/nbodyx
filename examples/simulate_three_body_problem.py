@@ -38,7 +38,7 @@ if __name__ == "__main__":
     tau = jnp.zeros((6,))
 
     # state bounds
-    x_min, x_max = -1.5 * jnp.ones((1,)), 1.5 * jnp.ones((1,))
+    x_min, x_max = -1.5 * jnp.ones((2,)), 1.5 * jnp.ones((2,))
 
     # render the image at the initial state
     img = render_n_body(x0, 500, 500, x_min, x_max)

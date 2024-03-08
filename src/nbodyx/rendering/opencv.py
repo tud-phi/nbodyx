@@ -25,6 +25,8 @@ def render_n_body(
         x: The positions of the bodies. Array of shape (num_bodies*2).
         width: The width of the image.
         height: The height of the image.
+        x_min: The minimum position. Array of shape (2, ).
+        x_max: The maximum position. Array of shape (2, ).
         body_radii: The radii of the bodies. Array of shape (num_bodies, ).
         body_colors: The RGB colors of the bodies. Array of shape (num_bodies, 3).
         label: The label of the image.
