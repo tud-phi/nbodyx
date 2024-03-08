@@ -5,7 +5,7 @@ build-backend = "flit.buildapi"
 [project]
 name = "nbodyx"
 authors = [{ name = "Maximilian Stolzle", email = "maximilian@stoelzle.ch" }]
-description = "Sample Python Project for creating a new Python Module"
+description = "A JAX simulator for N body problems."
 readme = "README.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
