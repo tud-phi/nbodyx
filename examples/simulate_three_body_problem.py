@@ -33,6 +33,8 @@ if __name__ == "__main__":
     # initial state
     y0 = jnp.stack([x0, v0], axis=0).reshape(-1)
     print("y0", y0)
+    # external torques
+    tau = jnp.zeros((6,))
 
     # state bounds
     x_min, x_max = -1.5 * jnp.ones((1,)), 1.5 * jnp.ones((1,))
@@ -49,7 +51,7 @@ if __name__ == "__main__":
 
     # solve the ODE
     ode_term = ODETerm(ode_fn)
-    sol = diffeqsolve(ode_term, Dopri5(), ts[0], ts[-1], dt, y0, saveat=SaveAt(ts=ts), max_steps=None)
+    sol = diffeqsolve(ode_term, Dopri5(), ts[0], ts[-1], dt, y0, tau, saveat=SaveAt(ts=ts), max_steps=None)
     y_bds_ts = sol.ys.reshape((len(ts), 2, 3, 2))
     # positions
     x_bds_ts = y_bds_ts[:, 0, ...]

@@ -27,11 +27,12 @@ if __name__ == "__main__":
 
     # state bounds
     x_min, x_max = -2 * AU * jnp.ones((1,)), 2 * AU * jnp.ones((1,))
+    # external torques
+    tau = jnp.zeros((4,))
 
     # evaluate the ODE at the initial state
-    y_d0 = jit(ode_fn)(0.0, y0)
+    y_d0 = jit(ode_fn)(0.0, y0, tau)
     print("y_d0", y_d0)
-
     # render the image at the initial state
     img = render_n_body(jnp.array([x_sun, x_earth]), 500, 500, x_min, x_max)
     plt.figure(num="Sample rendering")
@@ -45,7 +46,17 @@ if __name__ == "__main__":
 
     # solve the ODE
     ode_term = ODETerm(ode_fn)
-    sol = diffeqsolve(ode_term, Dopri5(), ts[0], ts[-1], dt, y0, saveat=SaveAt(ts=ts), max_steps=None)
+    sol = diffeqsolve(
+        ode_term,
+        Dopri5(),
+        ts[0],
+        ts[-1],
+        dt,
+        y0,
+        tau,
+        saveat=SaveAt(ts=ts),
+        max_steps=None
+    )
     y_bds_ts = sol.ys.reshape((len(ts), 2, 2, 2))
     # positions
     x_bds_ts = y_bds_ts[:, 0, ...]
