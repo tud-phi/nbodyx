@@ -67,9 +67,9 @@ if __name__ == "__main__":
     x_min, x_max = -1.5 * jnp.ones((1,)), 1.5 * jnp.ones((1,))
 
     # simulation settings
-    duration = 6.3259
+    duration = 6.3259  # duration of the simulation [s]
     ts = jnp.linspace(0.0, duration, 1001)
-    dt = ts[-1] * 1e-4
+    dt = 2e-4  # time step [s]
 
     # solve the ODE
     ode_term = ODETerm(ode_fn)

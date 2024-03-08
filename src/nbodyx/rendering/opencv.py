@@ -6,10 +6,11 @@ import numpy as onp
 from os import PathLike
 from pathlib import Path
 from tqdm import tqdm
+from typing import Union
 
 
 def render_n_body(
-    x_bds: Array,
+    x: Array,
     width: int,
     height: int,
     x_min: Array,
@@ -21,7 +22,7 @@ def render_n_body(
     """Render the n-body problem using OpenCV.
 
     Args:
-        x_bds: The positions of the bodies. Array of shape (num_bodies, 2).
+        x: The positions of the bodies. Array of shape (num_bodies*2).
         width: The width of the image.
         height: The height of the image.
         body_radii: The radii of the bodies. Array of shape (num_bodies, ).
@@ -30,12 +31,17 @@ def render_n_body(
     Returns:
         img: The rendered image.
     """
+    # reshape the positions
+    x_bds = x.reshape(-1, 2)
+
     # define ppm (pixels per meter)
     ppm = 0.9 * min(width, height) / jnp.max(x_max - x_min)
 
     # default body radii
     if body_radii is None:
         body_radii = (jnp.ones(x_bds.shape[0]) * 0.05 * min(width, height)).astype(int)
+    else:
+        body_radii = body_radii.astype(int)
 
     # default body colors
     if body_colors is None:
@@ -86,16 +92,33 @@ def render_n_body(
 
 def animate_n_body(
     ts: Array,
-    x_bds_ts: Array,
+    x_ts: Array,
     width: int,
     height: int,
     video_path: PathLike,
-    speed_up: int = 1,
+    speed_up: Union[float, Array] = 1,
     skip_step: int = 1,
     add_timestamp: bool = True,
     timestamp_unit: str = "s",
     **kwargs,
 ):
+    """
+    Animate the n-body problem using OpenCV.
+    Args:
+        ts: The time steps of the data. Array of shape (num_time_steps, ).
+        x_ts: The positions of the bodies. Array of shape (num_time_steps, num_bodies*2).
+        width: The width of the video.
+        height: The height of the video.
+        video_path: The path where the video will be saved.
+        speed_up: The speed up factor of the video.
+        skip_step: The number of time steps to skip between animation frames.
+        add_timestamp: Whether to add a timestamp to the video.
+        timestamp_unit: The unit of the timestamp. Can be "s" (seconds), "d" (days), "M" (months), or "y" (years).
+        **kwargs: Additional keyword arguments for the rendering function.
+
+    Returns:
+
+    """
     dt = jnp.mean(jnp.diff(ts)).item()
     fps = float(speed_up / (skip_step * dt))
     print(f"fps: {fps}")
@@ -112,7 +135,7 @@ def animate_n_body(
 
     # skip frames
     ts = ts[::skip_step]
-    x_bds_ts = x_bds_ts[::skip_step]
+    x_ts = x_ts[::skip_step]
 
     for time_idx, t in (pbar := tqdm(enumerate(ts))):
         pbar.set_description(f"Rendering frame {time_idx + 1}/{len(ts)}")
@@ -131,7 +154,7 @@ def animate_n_body(
                 raise ValueError(f"Invalid timestamp unit: {timestamp_unit}")
 
         # render the image
-        img = render_n_body(x_bds_ts[time_idx], width, height, label=label, **kwargs)
+        img = render_n_body(x_ts[time_idx], width, height, label=label, **kwargs)
 
         video.write(img)
 

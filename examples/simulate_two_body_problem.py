@@ -11,7 +11,8 @@ from nbodyx.ode import make_n_body_ode
 from nbodyx.rendering.opencv import animate_n_body, render_n_body
 
 if __name__ == "__main__":
-    ode_fn = make_n_body_ode(jnp.array([M_sun, M_earth]))
+    body_masses = jnp.array([M_sun, M_earth])
+    ode_fn = make_n_body_ode(body_masses)
 
     # initial conditions for earth
     x_earth = jnp.array([-AU, 0.0])
@@ -21,8 +22,10 @@ if __name__ == "__main__":
     # initial conditions for sun
     x_sun = jnp.array([0.0, 0.0])
     v_sun = jnp.array([0.0, 0.0])
+    # initial positions and velocities
+    x0, v0 = jnp.concatenate([x_sun, x_earth]), jnp.concatenate([v_sun, v0_earth])
     # initial state
-    y0 = jnp.concatenate([x_sun, x_earth, v_sun, v0_earth])
+    y0 = jnp.concatenate([x0, v0])
     print("y0", y0)
 
     # state bounds
@@ -30,11 +33,15 @@ if __name__ == "__main__":
     # external torques
     tau = jnp.zeros((4,))
 
+    # animation settings
+    img_size = (500, 500)
+    body_radii = 0.05 * min(img_size) * jnp.array([1.0, 0.5])
+
     # evaluate the ODE at the initial state
     y_d0 = jit(ode_fn)(0.0, y0, tau)
     print("y_d0", y_d0)
     # render the image at the initial state
-    img = render_n_body(jnp.array([x_sun, x_earth]), 500, 500, x_min, x_max)
+    img = render_n_body(x0, img_size[0], img_size[1], x_min, x_max, body_radii=body_radii)
     plt.figure(num="Sample rendering")
     plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     plt.show()
@@ -77,11 +84,12 @@ if __name__ == "__main__":
     animate_n_body(
         ts,
         x_bds_ts,
-        500,
-        500,
+        img_size[0],
+        img_size[1],
         video_path="examples/outputs/two_body.mp4",
         speed_up=ts[-1] / 10,
+        timestamp_unit="M",
         x_min=x_min,
         x_max=x_max,
-        timestamp_unit="M",
+        body_radii=body_radii,
     )
