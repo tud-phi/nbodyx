@@ -1,6 +1,9 @@
 # NBODYX: Simulating N-Body Systems with Jax
 
 This repository derives ODEs for N-Body systems and simulates them using Jax. The main goal is to provide a simple and efficient way to simulate N-Body systems using Jax.
+It is heavily inspired by the amazing [ThreeBodyBot](https://github.com/kirklong/ThreeBodyBot) and specifically the [NumericsTutorial](https://github.com/kirklong/ThreeBodyBot/blob/master/NumericsTutorial/NumericalDynamicsTutorial.ipynb).
+
+![3-body problem](assets/three_body.gif)
 
 ## Installation
 
@@ -25,7 +28,7 @@ conda install -c conda-forge ffmpeg
 
 ## Usage
 
-The following example simulates a 3-Body system:
+The following example simulates a 3-body system:
 
 ```python
 from diffrax import diffeqsolve, Dopri5, ODETerm, SaveAt
